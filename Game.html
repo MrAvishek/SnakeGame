@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation 2</title>
+    <style>
+        #coin {
+            display: flex;
+            background-color: darkcyan;
+            position: relative;
+            width: 550px;
+            height: 550px;
+        }
+
+        .snake-element {
+            position: absolute;
+            background-color: aquamarine;
+            height: 10px;
+            width: 10px;
+        }
+
+        #food {
+            position: absolute;
+            background-color: hsl(56, 89%, 49%);
+            height: 7px;
+            width: 7px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="coin">
+        <div id="element" class="snake-element"></div>
+        <div id="food"></div>
+    </div>
+    <!-- <button onclick="move()">press</button> -->
+</body>
+<script>
+    let moveBy = 2;
+    let id = null;
+    let snake = [];
+    let velX = 0;
+    let velY = 0;
+    let snakeSize = 1;
+
+    //snake initial position
+    let sn = document.getElementById("element");
+    let fd = document.getElementById("food");
+    sn.style.left = 0;
+    sn.style.top = 0;
+    snake.push(sn);
+    food();
+
+    //food position
+    function food() {
+        fd.style.left = Math.floor(Math.random() * 550) + "px";
+        fd.style.top = Math.floor(Math.random() * 550) + "px";
+    }
+
+    // move continuously
+    function move() {
+        let currX = parseInt(snake[0].style.left);
+        let currY = parseInt(snake[0].style.top);
+
+        if (Math.abs(currX - parseInt(fd.style.left)) <= 10 && Math.abs(currY - parseInt(fd.style.top)) <= 10) {
+            // Snake eats the food
+            food();
+            growSnake();
+        }
+
+        let newX = currX + velX;
+        let newY = currY + velY;
+
+        // Check collision with walls
+        // if (newX < 0 || newX >= 550 || newY < 0 || newY >= 550) {
+        //     clearInterval(id);
+        //     alert("Game Over!");
+        //     return;
+        // }
+
+        // // Check collision with its own body
+        // for (let i = 1; i < snake.length; i++) {
+        //     if (newX === parseInt(snake[i].style.left) && newY === parseInt(snake[i].style.top)) {
+        //         clearInterval(id);
+        //         alert("Game Over!");
+        //         return;
+        //     }
+        // }
+
+        // Move the snake's head
+        snake[0].style.left = newX + "px";
+        snake[0].style.top = newY + "px";
+
+        // Move the rest of the snake's body
+        for (let i = snake.length - 1; i > 0; i--) {
+            snake[i].style.left = snake[i - 1].style.left;
+            snake[i].style.top = snake[i - 1].style.top;
+        }
+    }
+
+    // Grow the snake by adding a new element
+    function growSnake() {
+        let newElement = document.createElement("div");
+        newElement.className = "snake-element";
+        snakeSize++;
+        newElement.style.left = snake[snakeSize - 2].style.left;
+        newElement.style.top = snake[snakeSize - 2].style.top;
+        snake.push(newElement);
+        document.getElementById("coin").appendChild(newElement);
+    }
+
+    window.addEventListener('keyup', (e) => {
+        switch (e.key) {
+            case 'ArrowLeft':
+                {
+                    velX = -moveBy;
+                    velY = 0;
+                    break;
+                }
+            case 'ArrowDown':
+                {
+                    velX = 0;
+                    velY = moveBy;
+                    break;
+                }
+            case 'ArrowRight':
+                {
+                    velX = moveBy;
+                    velY = 0;
+                    break;
+                }
+            case 'ArrowUp':
+                {
+                    velX = 0;
+                    velY = -moveBy;
+                    break;
+                }
+            case ' ':
+                {
+                    velX = 0;
+                    velY = 0;
+                    break;
+                }
+        }
+        clearInterval(id);
+        id = setInterval(move, 1000 / 60);
+    });
+
+</script>
+
+</html>
+
